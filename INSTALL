@@ -1,0 +1,10 @@
+Installation Instructions for 'xbistat'
+=======================================
+
+To make the Makefile:
+
+	xmkmf
+
+To build:
+
+	make

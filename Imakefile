@@ -1,0 +1,21 @@
+#
+# Imakefile for xbistat (use xmkmf)
+#
+
+SYS_LIBRARIES = -lz -lm
+LOCAL_LIBRARIES = XawClientLibs -lnetcdf
+DEPLIBS = XawClientDepLibs
+INCLUDES = -I../hub
+
+CDEBUGFLAGS = -g -O0
+CXXDEBUGFLAGS = -g -O0
+
+SRCS = xbistat.cc NCRadarFile.cc
+OBJS = xbistat.o NCRadarFile.o
+
+NormalCplusplusProgramTarget(xbistat, $(OBJS), $(DEPLIBS), $(LOCAL_LIBRARIES),)
+
+DependTarget()
+
+all:: xbistat
+
