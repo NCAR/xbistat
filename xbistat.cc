@@ -17,16 +17,17 @@
  * without warranty of any kind.
  */
 
-# include <math.h>
-# include <stdlib.h>
+# include <string>
+# include <cmath>
+# include <cstdlib>
 # include <fcntl.h>
-# include <stdio.h>
+# include <cstdio>
 # include <unistd.h>
-# include <signal.h>
-# include <errno.h>
+# include <csignal>
+# include <cerrno>
 # include <getopt.h>
-# include <string.h>
-# include <sys/time.h>
+# include <cstring>
+# include <ctime>
 # include <sys/types.h>
 # include <sys/socket.h>
 # include <netinet/in.h>
@@ -38,7 +39,7 @@
 # include <X11/Intrinsic.h>
 # include <X11/Xaw/Simple.h>
 
-# include "DisplayInfo.h"	/* our window size info */
+# include "DisplayInfo.hh"	/* our window size info */
 # include "NCRadarFile.hh"
 # include "datanotice.hh"
 
@@ -255,7 +256,6 @@ void	clear (const char* which);
 void	finish (Widget, XEvent *, String *, Cardinal *);
 void	done (void);
 void	start_or_stop (Widget, XEvent *, String *, Cardinal *);
-void    switch_bistatic (Widget, XEvent *, String *, Cardinal *);
 void	NextFile (void);
 void	RedrawDisplay (int time_index);
 void	set_vector (int x, int y, float u, float v);
@@ -268,7 +268,7 @@ void	DoGateVectors (XPoint pts[4], float u, float v, int g);
 
 
 
-main (int argc, char *argv[])
+int main (int argc, char *argv[])
 {
     char fname[40], c;
     int	src, x, y, option_index;
@@ -459,7 +459,7 @@ SetupRealtime ()
 			   RTNotification, NULL);
 
     NFiles = 1;
-    FileNames = new (char*)[1];
+    FileNames = new char*[1];
     FileNames[0] = 0;
 
     Realtime = 1;
@@ -476,7 +476,7 @@ SetupFileInput (char** srcs, int nsrcs)
     int s;
 
     NFiles = nsrcs;
-    FileNames = new (char*)[NFiles];
+    FileNames = new char*[NFiles];
     for (s = 0; s < NFiles; s++)
 	FileNames[s] = srcs[s];
 
@@ -798,7 +798,7 @@ init_display (int *argc, char **argv)
     XGCValues	gcvals;
     XRectangle	rect;
     Pixmap stipple;
-    char *trans = "<Key>q: finish() \n\
+    std::string trans = "<Key>q: finish() \n\
 		   <Key>Up: incr_field(1) \n\
 		   <Key>Down: incr_field(-1) \n\
 		   <Key>Right: incr_wind_field(1) \n\
@@ -816,20 +816,20 @@ init_display (int *argc, char **argv)
 		   <Btn1Down>,<Btn1Up>: move_center()";
     XtTranslations	ttable;
     XtActionsRec	actions[] = {
-	{"incr_field",	incr_field_event},
-	{"incr_wind_field",	incr_wind_field_event},
-	{"start_or_stop",	start_or_stop},
-	{"toggle",		toggle},
-	{"finish",		finish},
-	{"clear",		clear_request},
-	{"zoom",		zoom},
-	{"ToggleFakeAzimuths",	ToggleFakeAzimuths},
-	{"move_center",	move_center},
+	    {String("incr_field"),	incr_field_event},
+	    {String("incr_wind_field"),	incr_wind_field_event},
+	    {String("start_or_stop"),	start_or_stop},
+	    {String("toggle"),		toggle},
+	    {String("finish"),		finish},
+	    {String("clear"),		clear_request},
+	    {String("zoom"),		zoom},
+	    {String("ToggleFakeAzimuths"),	ToggleFakeAzimuths},
+	    {String("move_center"),	move_center},
     };
 /*
  * Initialize Xt
  */
-    top = XtAppInitialize (&Appc, "top", NULL, 0, argc, argv, NULL, 
+    top = XtAppInitialize (&Appc, String("top"), NULL, 0, argc, argv, NULL,
 			   NULL, 0);
     Disp = XtDisplay (top);
     depth = DefaultDepth (Disp, 0);
@@ -837,7 +837,7 @@ init_display (int *argc, char **argv)
  * Register actions and parse the translation table.
  */
     XtAppAddActions (Appc, actions, XtNumber (actions));
-    ttable = XtParseTranslationTable (trans);
+    ttable = XtParseTranslationTable (trans.c_str());
 /*
  * Create a D_WIDTH x D_HEIGHT simple widget for our display
  */
@@ -861,7 +861,7 @@ init_display (int *argc, char **argv)
  * Create the pixmap and generic graphics context
  */
     Pm = XCreatePixmap (Disp, XtWindow (Gw), D_WIDTH, D_HEIGHT, depth);
-    stipple = XCreatePixmapFromBitmapData (Disp, Pm, "\001\002", 2, 2, 1, 
+    stipple = XCreatePixmapFromBitmapData (Disp, Pm, String("\001\002"), 2, 2, 1,
 					   0, 1);
 
     Gc = XCreateGC (Disp, Pm, 0, NULL);

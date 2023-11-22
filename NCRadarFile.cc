@@ -1,28 +1,28 @@
+// NCRadarFile.cc
 //
-// $Id: NCRadarFile.cc,v 1.1 2000/08/29 21:03:43 burghart Exp $
+// Copyright © 2000 Binet Incorporated
+// Copyright © 2000 University Corporation for Atmospheric Research
 //
-// Copyright (C) 2000
-// Binet Incorporated 
-//       and 
-// University Corporation for Atmospheric Research
-// 
-// All rights reserved
+//   Licensed under the Apache License, Version 2.0 (the "License");
+//   you may not use this file except in compliance with the License.
+//   You may obtain a copy of the License at
 //
-// No part of this work covered by the copyrights herein may be reproduced
-// or used in any form or by any means -- graphic, electronic, or mechanical,
-// including photocopying, recording, taping, or information storage and
-// retrieval systems -- without permission of the copyright owners.
 //
-// This software and any accompanying written materials are provided "as is"
-// without warranty of any kind.
-// 
+//       http://www.apache.org/licenses/LICENSE-2.0
+//
+//
+//   Unless required by applicable law or agreed to in writing, software
+//   distributed under the License is distributed on an "AS IS" BASIS,
+//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//   See the License for the specific language governing permissions and
+//   limitations under the License.
 
-# include <stdio.h>
-# include <string.h>
+# include <cstdio>
+# include <cstring>
 # include <netcdf.h>
 # include "NCRadarFile.hh"
 
-const float _c_ = 2.998e8;	// c - m/s
+const float _c_ = 2.99792458e8;	// speed of light m/s
 
 //
 // Private class _productvar
@@ -119,7 +119,7 @@ NCRadarFile::NCRadarFile( const char* fname )
 //
 // per-system info
 //
-    SysName = new (char*)[NumSys];
+    SysName = new char*[NumSys];
     NCells = new int[NumSys];
     SysLatitude = new double[NumSys];
     SysLongitude = new double[NumSys];
@@ -217,7 +217,7 @@ NCRadarFile::GetSystemNames( void )
     nc_inq_vardimid( NCid, varid, dimids );
     nc_inq_dimlen( NCid, dimids[1], &maxnamelen );
 
-    for (int s = 0; s < NumSys; s++)
+    for (size_t s = 0; s < NumSys; s++)
     {
 	size_t start[2] = { s, 0 };
 	size_t count[2] = { 1, maxnamelen };
@@ -601,7 +601,7 @@ NCRadarFile::ProductIndex( const char* varname ) const
 
 
 
-int 
+bool
 NCRadarFile::GetProductDetails( int pndx, int* sys_index, char* longname, 
 				char* units ) const
 //
@@ -619,6 +619,7 @@ NCRadarFile::GetProductDetails( int pndx, int* sys_index, char* longname,
 	strcpy( longname, ProductVars[pndx].LongName );
     if (units)
 	strcpy( units, ProductVars[pndx].Units );
+    return true;
 }
 
 
@@ -641,9 +642,9 @@ NCRadarFile::GetProduct( int pndx, int tindex, float* vals, int maxvals,
 
     int varid = pvar->Varid;
     int sys_index = pvar->SystemIndex;
-    int nvals = (NCells[sys_index] < maxvals) ? NCells[sys_index] : maxvals;
+    size_t nvals = (NCells[sys_index] < maxvals) ? NCells[sys_index] : maxvals;
 
-    size_t start[2] = { tindex, 0 };
+    size_t start[2] = { size_t(tindex), 0 };
     size_t count[2] = { 1, nvals };
 
     if (nsvals < MaxCells)

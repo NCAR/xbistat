@@ -1,6 +1,4 @@
-//
-// $Id: datanotice.hh,v 1.1 2000/08/29 21:03:44 burghart Exp $
-//
+// datanotice.hh
 // Just the port number for sending data notices to xbistat
 //
 // The notices themselves are just ASCII strings of the form:

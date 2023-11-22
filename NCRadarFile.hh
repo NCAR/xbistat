@@ -1,25 +1,26 @@
+// NCRadarFile.hh
 //
-// $Id: NCRadarFile.hh,v 1.1 2000/08/29 21:03:44 burghart Exp $
+// Copyright © 2000 Binet Incorporated
+// Copyright © 2000 University Corporation for Atmospheric Research
 //
-// Copyright (C) 2000
-// Binet Incorporated 
-//       and 
-// University Corporation for Atmospheric Research
-// 
-// All rights reserved
+//   Licensed under the Apache License, Version 2.0 (the "License");
+//   you may not use this file except in compliance with the License.
+//   You may obtain a copy of the License at
 //
-// No part of this work covered by the copyrights herein may be reproduced
-// or used in any form or by any means -- graphic, electronic, or mechanical,
-// including photocopying, recording, taping, or information storage and
-// retrieval systems -- without permission of the copyright owners.
 //
-// This software and any accompanying written materials are provided "as is"
-// without warranty of any kind.
-// 
+//       http://www.apache.org/licenses/LICENSE-2.0
+//
+//
+//   Unless required by applicable law or agreed to in writing, software
+//   distributed under the License is distributed on an "AS IS" BASIS,
+//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//   See the License for the specific language governing permissions and
+//   limitations under the License.
+
 # ifndef _NCRADARFILE_HH_
 # define _NCRADARFILE_HH_
 
-# include <stdlib.h>
+# include <cstdlib>
 
 class _productvar;	// private class defined in NCRadarFile.cc
 
@@ -56,7 +57,7 @@ public:
     inline int NumProducts( void ) const { return NProducts; };
     const char* ProductName( int pndx ) const;
     int ProductIndex( const char* varname ) const;
-    int GetProductDetails( int pndx, int* sys_index, char* longname, 
+    bool GetProductDetails( int pndx, int* sys_index, char* longname,
 			   char* units ) const;
     int GetProduct( int pndx, int tindex, float* vals, int maxvals,
 		    float badval ) const;
